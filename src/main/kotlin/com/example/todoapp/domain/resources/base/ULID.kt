@@ -9,10 +9,3 @@ private val ulidgen = object : ThreadLocal<ULIDGen>() {
 typealias ULID = String
 
 fun ulid(): ULID = ulidgen.get().nextULID()
-
-fun ULID.toULIDObject() = ULIDGen.parseULID(this)
-
-fun t() {
-    val id = ulid()
-    id.toULIDObject()
-}
