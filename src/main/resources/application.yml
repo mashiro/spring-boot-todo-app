@@ -1,0 +1,37 @@
+spring:
+  profiles:
+    active: local
+
+  mvc:
+    throw-exception-if-no-handler-found: true
+
+  web:
+    resources:
+      add-mappings: false
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  output:
+    ansi:
+      enabled: always
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/todo-app
+    username: root
+    password:
+
+  exposed:
+    generate-ddl: true
+    excluded-packages: com.example.todoapp.infrastructure.exposed.dao.id
+
+logging:
+  level:
+    Exposed: debug
+
+app:
+  todo:
+    value: from application.yml
