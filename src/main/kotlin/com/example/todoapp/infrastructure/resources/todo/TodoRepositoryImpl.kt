@@ -3,6 +3,7 @@ package com.example.todoapp.infrastructure.resources.todo
 import com.example.todoapp.domain.exceptions.ULIDNotFoundException
 import com.example.todoapp.domain.resources.base.ULID
 import com.example.todoapp.domain.resources.todo.*
+import com.example.todoapp.infrastructure.exposed.extensions.toExposed
 import com.example.todoapp.infrastructure.exposed.tables.Todos
 import org.jetbrains.exposed.sql.*
 import org.springframework.stereotype.Repository
@@ -54,6 +55,13 @@ class TodoRepositoryImpl : TodoRepository {
         }
         args.completed?.let {
             query.andWhere { Todos.completed eq args.completed }
+        }
+
+        args.orderBy?.forEach {
+            when (it) {
+                is TodoOrderByArgs.Id -> query.orderBy(Todos.id to it.order.toExposed())
+                is TodoOrderByArgs.Title -> query.orderBy(Todos.title to it.order.toExposed())
+            }
         }
 
         return query.toList().map(this::toDomain)

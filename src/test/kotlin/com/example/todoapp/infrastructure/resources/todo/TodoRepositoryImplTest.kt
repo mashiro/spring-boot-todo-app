@@ -3,11 +3,9 @@ package com.example.todoapp.infrastructure.resources.todo
 import assertk.assertThat
 import assertk.assertions.*
 import com.example.todoapp.domain.exceptions.ULIDNotFoundException
+import com.example.todoapp.domain.resources.base.SortOrder
 import com.example.todoapp.domain.resources.base.ulid
-import com.example.todoapp.domain.resources.todo.TodoCreateArgs
-import com.example.todoapp.domain.resources.todo.TodoDeleteArgs
-import com.example.todoapp.domain.resources.todo.TodoFindAllArgs
-import com.example.todoapp.domain.resources.todo.TodoUpdateArgs
+import com.example.todoapp.domain.resources.todo.*
 import com.example.todoapp.infrastructure.exposed.tables.Todos
 import com.example.todoapp.infrastructure.testcontainers.KMySQLContainer
 import com.example.todoapp.infrastructure.testcontainers.MySQLContainerExtension
@@ -121,8 +119,9 @@ internal class TodoRepositoryImplTest {
             this[Todos.createdAt] = now
             this[Todos.updatedAt] = now
         }
-        val todos = todoRepositoryImpl.findAll(TodoFindAllArgs(title = "b"))
+        val order = listOf(TodoOrderByArgs.Title(SortOrder.DESC))
+        val todos = todoRepositoryImpl.findAll(TodoFindAllArgs(title = "b", orderBy = order))
         assertThat(todos).hasSize(2)
-        assertThat(todos).extracting { it.title }.containsExactlyInAnyOrder("bar", "buzz")
+        assertThat(todos).extracting { it.title }.containsExactly("buzz", "bar")
     }
 }
