@@ -15,10 +15,15 @@ class RepositoryAspect {
     fun wrapInfrastructureException(pjp: ProceedingJoinPoint, repository: Repository): Any {
         try {
             return pjp.proceed()
-        } catch (ex: DomainException) {
-            throw ex
         } catch (ex: Throwable) {
-            throw InfrastructureException(cause = ex)
+            when (ex) {
+                is DomainException -> {
+                    throw ex
+                }
+                else -> {
+                    throw InfrastructureException(cause = ex)
+                }
+            }
         }
     }
 }

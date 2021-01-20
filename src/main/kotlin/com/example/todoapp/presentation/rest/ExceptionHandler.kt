@@ -11,6 +11,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.servlet.NoHandlerFoundException
+import javax.validation.ConstraintViolationException
 
 @ControllerAdvice
 class ExceptionHandler {
@@ -42,7 +43,8 @@ class ExceptionHandler {
     @ExceptionHandler(
         value = [
             BindException::class,
-            TypeMismatchException::class
+            TypeMismatchException::class,
+            ConstraintViolationException::class
         ]
     )
     fun handleBadRequest(ex: Exception) = buildErrorResponseEntity(

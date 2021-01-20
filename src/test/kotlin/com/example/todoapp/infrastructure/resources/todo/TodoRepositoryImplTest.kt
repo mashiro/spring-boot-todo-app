@@ -13,6 +13,7 @@ import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
@@ -21,7 +22,8 @@ import java.time.Instant
 @Transactional
 @ExtendWith(MySQLContainerExtension::class)
 internal class TodoRepositoryImplTest {
-    private val todoRepositoryImpl = TodoRepositoryImpl()
+    @Autowired
+    private lateinit var todoRepositoryImpl: TodoRepositoryImpl
 
     @Test
     fun containerResolver(mysql: KMySQLContainer) {

@@ -2,10 +2,10 @@ package com.example.todoapp.presentation.rest.resources.todo
 
 import com.example.todoapp.domain.resources.base.ULID
 import com.example.todoapp.domain.resources.todo.*
-import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import java.time.OffsetDateTime
 import java.time.ZoneId
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("todos")
@@ -13,7 +13,7 @@ class TodoController(
     private val todoService: TodoService
 ) {
     @PostMapping("")
-    fun create(@Validated @RequestBody req: TodoCreateRequest): TodoResponse {
+    fun create(@Valid @RequestBody req: TodoCreateRequest): TodoResponse {
         val args = TodoCreateArgs(title = req.title)
         val todo = todoService.create(args)
         return toResponse(todo)
@@ -22,7 +22,7 @@ class TodoController(
     @PutMapping("{id}")
     fun update(
         @PathVariable("id") id: ULID,
-        @Validated @RequestBody req: TodoUpdateRequest
+        @Valid @RequestBody req: TodoUpdateRequest
     ): TodoResponse {
         val args = TodoUpdateArgs(id = id, title = req.title, completed = req.completed)
         val todo = todoService.update(args)
@@ -42,7 +42,7 @@ class TodoController(
     }
 
     @GetMapping("")
-    fun getAll(@Validated req: TodoGetAllRequest): List<TodoResponse> {
+    fun getAll(@Valid req: TodoGetAllRequest): List<TodoResponse> {
         val args = TodoFindAllArgs(title = req.title, completed = req.completed)
         val todos = todoService.getAll(args)
         return todos.map(this::toResponse)

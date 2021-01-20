@@ -4,28 +4,31 @@ import com.example.todoapp.domain.resources.base.ULID
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.validation.annotation.Validated
+import javax.validation.Valid
 
 private val log = KotlinLogging.logger { }
 
 @Service
+@Validated
 class TodoService(
     private val todoRepository: TodoRepository,
     private val todoProperties: TodoProperties
 ) {
     @Transactional
-    fun create(args: TodoCreateArgs): Todo {
+    fun create(@Valid args: TodoCreateArgs): Todo {
         log.debug { todoProperties.value }
         return todoRepository.create(args)
     }
 
     @Transactional
-    fun update(args: TodoUpdateArgs): Todo {
+    fun update(@Valid args: TodoUpdateArgs): Todo {
         log.debug { todoProperties.value }
         return todoRepository.update(args)
     }
 
     @Transactional
-    fun delete(args: TodoDeleteArgs): Boolean {
+    fun delete(@Valid args: TodoDeleteArgs): Boolean {
         log.debug { todoProperties.value }
         return todoRepository.delete(args)
     }
@@ -37,7 +40,7 @@ class TodoService(
     }
 
     @Transactional(readOnly = true)
-    fun getAll(args: TodoFindAllArgs): List<Todo> {
+    fun getAll(@Valid args: TodoFindAllArgs): List<Todo> {
         log.debug { todoProperties.value }
         return todoRepository.findAll(args)
     }

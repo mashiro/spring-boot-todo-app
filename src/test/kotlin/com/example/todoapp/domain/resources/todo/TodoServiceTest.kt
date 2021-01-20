@@ -1,14 +1,16 @@
 package com.example.todoapp.domain.resources.todo
 
+import assertk.assertThat
+import assertk.assertions.*
 import com.example.todoapp.domain.resources.base.ulid
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.Instant
+import javax.validation.ConstraintViolationException
 
 @SpringBootTest
 internal class TodoServiceTest {
@@ -48,6 +50,18 @@ internal class TodoServiceTest {
         assertThat(actual.updatedAt).isEqualTo(todo.updatedAt)
 
         verify { todoRepository.create(args) }
+    }
+
+    @Test
+    fun createWithEmptyTitle() {
+        every { todoProperties.value } returns "from test create"
+
+        val todo = buildTodo("")
+        val args = TodoCreateArgs(title = todo.title)
+
+        assertThat {
+            todoService.create(args)
+        }.isFailure().isInstanceOf(ConstraintViolationException::class)
     }
 
     @Test
