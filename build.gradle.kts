@@ -1,3 +1,4 @@
+import com.adarshr.gradle.testlogger.theme.ThemeType.MOCHA_PARALLEL
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -6,6 +7,7 @@ plugins {
     kotlin("jvm") version "1.4.21"
     kotlin("kapt") version "1.4.21"
     kotlin("plugin.spring") version "1.4.21"
+    id("com.adarshr.test-logger") version "2.1.1"
 }
 
 group = "com.example"
@@ -15,6 +17,13 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 repositories {
     mavenCentral()
     jcenter()
+}
+
+configurations {
+    "implementation" {
+        exclude("org.assertj")
+        exclude("org.mockito")
+    }
 }
 
 dependencies {
@@ -46,6 +55,10 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers:1.15.1")
     testImplementation("org.testcontainers:junit-jupiter:1.15.1")
     testImplementation("org.testcontainers:mysql:1.15.1")
+}
+
+testlogger {
+    theme = MOCHA_PARALLEL
 }
 
 tasks.withType<KotlinCompile> {
