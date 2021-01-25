@@ -1,32 +1,39 @@
 package com.example.todoapp.infrastructure.testcontainers
 
-import org.junit.jupiter.api.extension.*
+import org.junit.jupiter.api.extension.BeforeAllCallback
+import org.junit.jupiter.api.extension.ExtensionContext
+import org.junit.jupiter.api.extension.ParameterContext
+import org.junit.jupiter.api.extension.ParameterResolver
 
-class MySQLContainerExtension : BeforeAllCallback, AfterAllCallback, ParameterResolver {
+class MySQLContainerExtension : BeforeAllCallback, ParameterResolver {
     companion object {
-        private const val CONTAINER_KEY = "container"
         private const val IMAGE_NAME = "mysql:5.7"
+        private const val CONTAINER_KEY = "container"
         private val NAMESPACE = ExtensionContext.Namespace.create(MySQLContainerExtension::class.java)!!
     }
 
+    class ContainerResource(
+        val container: KMySQLContainer
+    ) : ExtensionContext.Store.CloseableResource {
+        override fun close() {
+            container.stop()
+        }
+    }
+
     override fun beforeAll(context: ExtensionContext) {
-        val container = KMySQLContainer(IMAGE_NAME)
-        container.start()
-
-        getStore(context).put(CONTAINER_KEY, container)
-    }
-
-    override fun afterAll(context: ExtensionContext) {
-        val container = getContainer(context)
-        container.stop()
-    }
-
-    private fun getContainer(context: ExtensionContext): KMySQLContainer {
-        return getStore(context).get(CONTAINER_KEY, KMySQLContainer::class.java)
+        val store = getStore(context)
+        store.getOrComputeIfAbsent(CONTAINER_KEY) { _: String ->
+            val container = KMySQLContainer(IMAGE_NAME).apply { start() }
+            ContainerResource(container)
+        }
     }
 
     private fun getStore(context: ExtensionContext): ExtensionContext.Store {
-        return context.getStore(NAMESPACE)
+        return context.root.getStore(NAMESPACE)
+    }
+
+    private fun getContainer(context: ExtensionContext): KMySQLContainer {
+        return getStore(context).get(CONTAINER_KEY, ContainerResource::class.java).container
     }
 
     override fun supportsParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Boolean {
