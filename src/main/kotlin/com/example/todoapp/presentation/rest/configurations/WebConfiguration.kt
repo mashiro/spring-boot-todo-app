@@ -4,6 +4,7 @@ import com.example.todoapp.presentation.rest.converters.StringToULIDConverter
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.format.FormatterRegistry
+import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
@@ -19,5 +20,6 @@ class WebConfiguration : WebMvcConfigurer {
 class LocalWebConfiguration : WebMvcConfigurer {
     override fun addCorsMappings(registry: CorsRegistry) {
         registry.addMapping("/**")
+            .allowedMethods(CorsConfiguration.ALL)
     }
 }
