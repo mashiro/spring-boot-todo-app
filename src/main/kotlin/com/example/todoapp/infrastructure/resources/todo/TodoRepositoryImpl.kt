@@ -57,10 +57,14 @@ class TodoRepositoryImpl : TodoRepository {
             query.andWhere { Todos.completed eq args.completed }
         }
 
-        args.orderBy?.forEach {
-            when (it) {
-                is TodoOrderByArgs.Id -> query.orderBy(Todos.id to it.order.toExposed())
-                is TodoOrderByArgs.Title -> query.orderBy(Todos.title to it.order.toExposed())
+        if (args.orderBy.isNullOrEmpty()) {
+            query.orderBy(Todos.id to SortOrder.DESC)
+        } else {
+            args.orderBy.forEach {
+                when (it) {
+                    is TodoOrderByArgs.Id -> query.orderBy(Todos.id to it.order.toExposed())
+                    is TodoOrderByArgs.Title -> query.orderBy(Todos.title to it.order.toExposed())
+                }
             }
         }
 
