@@ -28,10 +28,7 @@ spring:
     generate-ddl: true
     excluded-packages: com.example.todoapp.infrastructure.exposed.dao.id
 
-logging:
-  level:
-    Exposed: debug
-
 app:
   todo:
     value: from application.yml
+
